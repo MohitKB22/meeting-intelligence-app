@@ -23,24 +23,6 @@ No frameworks. No dependencies. Just HTML, CSS, JavaScript, and Claude AI.
 
 ---
 
-## 📸 Screenshots
-
-> Add screenshots here after uploading them.
-
-### Dashboard
-
-![Dashboard](assets/dashboard.png)
-
-### AI Summary
-
-![Summary](assets/summary.png)
-
-### Meeting Intelligence
-
-![Intelligence](assets/intelligence.png)
-
----
-
 ## 🎯 Key Features
 
 ### 📝 Smart Meeting Notes

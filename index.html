@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Meeting Assistant</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <span class="logo-icon">◎</span>
+      <span class="logo-text">MeetAI</span>
+    </div>
+    <button class="sidebar-toggle" id="sidebarToggle" title="Toggle sidebar">&#x2715;</button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Meeting</div>
+    <button class="nav-btn active" data-tab="setup"><span class="nav-icon">⚙</span> Setup</button>
+    <button class="nav-btn" data-tab="live"><span class="nav-icon">●</span> Live Notes</button>
+    <button class="nav-btn" data-tab="actions"><span class="nav-icon">✓</span> Action Items</button>
+    <button class="nav-btn" data-tab="decisions"><span class="nav-icon">⊕</span> Decisions</button>
+    <button class="nav-btn" data-tab="risks"><span class="nav-icon">⚠</span> Risks</button>
+
+    <div class="nav-section-label">AI &amp; Output</div>
+    <button class="nav-btn" data-tab="summary"><span class="nav-icon">≡</span> Summary</button>
+    <button class="nav-btn" data-tab="email"><span class="nav-icon">✉</span> Follow-up Email</button>
+    <button class="nav-btn" data-tab="report"><span class="nav-icon">📋</span> Final Report</button>
+    <button class="nav-btn" data-tab="intelligence"><span class="nav-icon">◈</span> Intelligence</button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="meeting-status" id="meetingStatus">
+      <span class="status-dot inactive"></span>
+      <span class="status-text">No active meeting</span>
+    </div>
+    <button class="btn-start" id="toggleMeeting">Start Meeting</button>
+  </div>
+</aside>
+
+<!-- MAIN AREA -->
+<div class="main-wrapper">
+  <header class="topbar">
+    <button class="menu-btn" id="menuBtn">☰</button>
+    <div class="meeting-title-bar">
+      <span id="topbarTitle">AI Meeting Assistant</span>
+      <span class="meeting-time" id="meetingTimer">00:00:00</span>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn-icon" id="exportBtn" title="Export JSON">⬇ Export</button>
+      <button class="btn-icon" id="clearBtn" title="Reset">↺ Reset</button>
+    </div>
+  </header>
+
+  <main class="content-area">
+
+    <!-- ===== SETUP TAB ===== -->
+    <section class="tab-panel active" id="tab-setup">
+      <div class="panel-header">
+        <h2>Meeting Setup</h2>
+        <p>Configure your meeting context before starting</p>
+      </div>
+      <div class="setup-grid">
+        <div class="form-group">
+          <label>Meeting Title <span class="required">*</span></label>
+          <input type="text" id="meetingTitle" placeholder="e.g. Q3 Product Planning Sprint" />
+        </div>
+        <div class="form-group span-2">
+          <label>Meeting Objective <span class="required">*</span></label>
+          <textarea id="meetingObjective" rows="3" placeholder="What is the goal of this meeting?"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Participants</label>
+          <div class="tag-input-wrapper">
+            <div class="tags-container" id="participantTags"></div>
+            <input type="text" id="participantInput" placeholder="Type name, press Enter" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Stakeholders</label>
+          <div class="tag-input-wrapper">
+            <div class="tags-container" id="stakeholderTags"></div>
+            <input type="text" id="stakeholderInput" placeholder="Type name, press Enter" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Timeline / Deadline</label>
+          <input type="text" id="meetingTimeline" placeholder="e.g. End of Q3, September 30" />
+        </div>
+        <div class="form-group">
+          <label>Project / Context</label>
+          <input type="text" id="meetingProject" placeholder="e.g. Mobile App Relaunch" />
+        </div>
+        <div class="form-group span-2">
+          <label>Previous Meeting Outcomes</label>
+          <textarea id="prevOutcomes" rows="3" placeholder="Key outcomes from last meeting..."></textarea>
+        </div>
+        <div class="form-group span-2">
+          <label>Agenda Items</label>
+          <div class="agenda-builder">
+            <div class="agenda-list" id="agendaList"></div>
+            <div class="agenda-add-row">
+              <input type="text" id="agendaInput" placeholder="Add agenda item..." />
+              <button class="btn-add" id="addAgendaBtn">+ Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="setup-actions">
+        <button class="btn-primary" id="saveMeetingSetup">Save &amp; Continue →</button>
+      </div>
+    </section>
+
+    <!-- ===== LIVE NOTES TAB ===== -->
+    <section class="tab-panel" id="tab-live">
+      <div class="panel-header">
+        <h2>Live Notes</h2>
+        <p>Enter conversation as it unfolds — AI will classify every entry automatically</p>
+      </div>
+      <div class="live-input-area">
+        <div class="input-controls">
+          <select id="speakerSelect"><option value="">— Speaker —</option></select>
+          <select id="noteTypeSelect">
+            <option value="auto">Auto-detect</option>
+            <option value="discussion">Discussion</option>
+            <option value="decision">Decision</option>
+            <option value="action">Action Item</option>
+            <option value="risk">Risk</option>
+            <option value="question">Open Question</option>
+          </select>
+        </div>
+        <div class="note-compose">
+          <textarea id="liveNoteInput" rows="3" placeholder="Type what was said or decided… Ctrl+Enter to add"></textarea>
+          <button class="btn-primary" id="addNoteBtn">Add ↵</button>
+        </div>
+      </div>
+      <div class="ai-processing" id="aiProcessing" style="display:none">
+        <span class="pulse-dot"></span> AI is classifying this entry…
+      </div>
+      <div class="live-feed" id="liveFeed">
+        <div class="empty-state">
+          <p>◎ Notes will appear here as you add them</p>
+          <p class="sub">Each entry is automatically classified and tracked</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ACTION ITEMS TAB ===== -->
+    <section class="tab-panel" id="tab-actions">
+      <div class="panel-header">
+        <h2>Action Items</h2>
+        <p>Track all tasks, owners, and deadlines</p>
+      </div>
+      <div class="toolbar">
+        <button class="btn-secondary" id="addActionBtn">+ New Action Item</button>
+        <div class="filter-group">
+          <select id="actionFilter">
+            <option value="all">All Statuses</option>
+            <option value="Open">Open</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Closed">Closed</option>
+          </select>
+          <select id="priorityFilter">
+            <option value="all">All Priorities</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+          </select>
+        </div>
+      </div>
+      <div class="action-table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr><th>#</th><th>Task</th><th>Owner</th><th>Due Date</th><th>Priority</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="actionsTableBody">
+            <tr class="empty-row"><td colspan="7">No action items yet</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== DECISIONS TAB ===== -->
+    <section class="tab-panel" id="tab-decisions">
+      <div class="panel-header">
+        <h2>Decision Log</h2>
+        <p>All decisions made during the meeting</p>
+      </div>
+      <div class="toolbar">
+        <button class="btn-secondary" id="addDecisionBtn">+ Log Decision</button>
+      </div>
+      <div class="decisions-grid" id="decisionsGrid">
+        <div class="empty-state"><p>⊕ No decisions logged yet</p></div>
+      </div>
+    </section>
+
+    <!-- ===== RISKS TAB ===== -->
+    <section class="tab-panel" id="tab-risks">
+      <div class="panel-header">
+        <h2>Risk Register</h2>
+        <p>Identified risks, blockers, and dependencies</p>
+      </div>
+      <div class="toolbar">
+        <button class="btn-secondary" id="addRiskBtn">+ Add Risk</button>
+      </div>
+      <div class="risks-grid" id="risksGrid">
+        <div class="empty-state"><p>⚠ No risks identified yet</p></div>
+      </div>
+    </section>
+
+    <!-- ===== SUMMARY TAB ===== -->
+    <section class="tab-panel" id="tab-summary">
+      <div class="panel-header">
+        <h2>Meeting Summary</h2>
+        <p>AI-generated executive and detailed summaries</p>
+      </div>
+      <div class="summary-controls">
+        <button class="btn-primary" id="generateSummaryBtn">✦ Generate Summary</button>
+        <select id="summaryType">
+          <option value="executive">Executive Summary</option>
+          <option value="detailed">Detailed Summary</option>
+          <option value="both">Both</option>
+        </select>
+      </div>
+      <div class="ai-output-area" id="summaryOutput">
+        <div class="empty-state"><p>≡ Click "Generate Summary" to produce an AI summary</p></div>
+      </div>
+    </section>
+
+    <!-- ===== EMAIL TAB ===== -->
+    <section class="tab-panel" id="tab-email">
+      <div class="panel-header">
+        <h2>Follow-up Email</h2>
+        <p>Generate a professional follow-up email for all participants</p>
+      </div>
+      <div class="summary-controls">
+        <button class="btn-primary" id="generateEmailBtn">✦ Generate Email</button>
+        <button class="btn-secondary" id="copyEmailBtn">📋 Copy</button>
+        <button class="btn-secondary" id="sendSlackBtn">💬 Send to Slack</button>
+        <button class="btn-secondary" id="sendEmailClientBtn">✉ Open in Mail</button>
+      </div>
+
+      <!-- Slack channel input — shown inline, no separate settings page -->
+      <div class="inline-config-row">
+        <label>Slack channel</label>
+        <input type="text" id="slackChannel" placeholder="#general" style="max-width:180px" />
+      </div>
+
+      <div class="email-preview" id="emailPreview">
+        <div class="empty-state"><p>✉ Click "Generate Email" to create a follow-up email</p></div>
+      </div>
+    </section>
+
+    <!-- ===== FINAL REPORT TAB ===== -->
+    <section class="tab-panel" id="tab-report">
+      <div class="panel-header">
+        <h2>Final Report</h2>
+        <p>Complete formal meeting minutes and report</p>
+      </div>
+      <div class="summary-controls">
+        <button class="btn-primary" id="generateReportBtn">✦ Generate Report</button>
+        <button class="btn-secondary" id="copyReportBtn">📋 Copy</button>
+        <button class="btn-secondary" id="saveNotionBtn">📓 Save to Notion</button>
+        <button class="btn-secondary" id="saveGdriveBtn">📂 Save to Drive</button>
+      </div>
+
+      <!-- Follow-up event scheduler — inline, no settings page -->
+      <div class="inline-config-row">
+        <label>Follow-up event</label>
+        <input type="date" id="calDate" style="max-width:160px" />
+        <input type="time" id="calTime" value="10:00" style="max-width:120px" />
+        <button class="btn-secondary" id="createCalBtn">📅 Create Calendar Event</button>
+      </div>
+
+      <div class="ai-output-area" id="reportOutput">
+        <div class="empty-state"><p>📋 Full meeting report will appear here</p></div>
+      </div>
+    </section>
+
+    <!-- ===== INTELLIGENCE TAB ===== -->
+    <section class="tab-panel" id="tab-intelligence">
+      <div class="panel-header">
+        <h2>Meeting Intelligence</h2>
+        <p>Sentiment, engagement, alignment &amp; strategic recommendations</p>
+      </div>
+      <div class="summary-controls">
+        <button class="btn-primary" id="generateIntelBtn">✦ Analyze Meeting</button>
+      </div>
+      <div class="intel-grid" id="intelligenceOutput">
+        <div class="empty-state"><p>◈ Click "Analyze Meeting" for AI-powered insights</p></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modalOverlay"></div>
+
+<!-- Action Item Modal -->
+<div class="modal" id="actionModal">
+  <div class="modal-header">
+    <h3 id="actionModalTitle">Add Action Item</h3>
+    <button class="modal-close" onclick="closeModal('actionModal')">✕</button>
+  </div>
+  <div class="modal-body">
+    <input type="hidden" id="actionEditId" />
+    <div class="form-group">
+      <label>Task Description <span class="required">*</span></label>
+      <textarea id="actionTask" rows="3" placeholder="What must be done?"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Owner</label>
+        <input type="text" id="actionOwner" placeholder="Responsible person" />
+      </div>
+      <div class="form-group">
+        <label>Due Date</label>
+        <input type="date" id="actionDue" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Priority</label>
+        <select id="actionPriority">
+          <option value="High">High</option>
+          <option value="Medium" selected>Medium</option>
+          <option value="Low">Low</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="actionStatus">
+          <option value="Open" selected>Open</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Closed">Closed</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn-secondary" onclick="closeModal('actionModal')">Cancel</button>
+    <button class="btn-primary" id="saveActionBtn">Save Action Item</button>
+  </div>
+</div>
+
+<!-- Decision Modal -->
+<div class="modal" id="decisionModal">
+  <div class="modal-header">
+    <h3>Log Decision</h3>
+    <button class="modal-close" onclick="closeModal('decisionModal')">✕</button>
+  </div>
+  <div class="modal-body">
+    <input type="hidden" id="decisionEditId" />
+    <div class="form-group">
+      <label>Decision Description <span class="required">*</span></label>
+      <textarea id="decisionDesc" rows="3" placeholder="What was decided?"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Decision Maker(s)</label>
+        <input type="text" id="decisionMakers" placeholder="Who made this decision?" />
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="decisionDate" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Reasoning</label>
+      <textarea id="decisionReasoning" rows="2" placeholder="Why was this decision made?"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Impact</label>
+      <textarea id="decisionImpact" rows="2" placeholder="What is the impact?"></textarea>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn-secondary" onclick="closeModal('decisionModal')">Cancel</button>
+    <button class="btn-primary" id="saveDecisionBtn">Save Decision</button>
+  </div>
+</div>
+
+<!-- Risk Modal -->
+<div class="modal" id="riskModal">
+  <div class="modal-header">
+    <h3>Add Risk / Blocker</h3>
+    <button class="modal-close" onclick="closeModal('riskModal')">✕</button>
+  </div>
+  <div class="modal-body">
+    <input type="hidden" id="riskEditId" />
+    <div class="form-group">
+      <label>Risk Description <span class="required">*</span></label>
+      <textarea id="riskDesc" rows="3" placeholder="Describe the risk or blocker..."></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Type</label>
+        <select id="riskType">
+          <option value="Timeline">Timeline Risk</option>
+          <option value="Budget">Budget Risk</option>
+          <option value="Resource">Resource Constraint</option>
+          <option value="Technical">Technical Challenge</option>
+          <option value="Compliance">Compliance Concern</option>
+          <option value="Communication">Communication Gap</option>
+          <option value="Blocker">Blocker</option>
+          <option value="Dependency">Dependency</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Probability</label>
+        <select id="riskProbability">
+          <option value="High">High</option>
+          <option value="Medium" selected>Medium</option>
+          <option value="Low">Low</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Impact</label>
+      <select id="riskImpact">
+        <option value="High">High</option>
+        <option value="Medium" selected>Medium</option>
+        <option value="Low">Low</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Mitigation Strategy</label>
+      <textarea id="riskMitigation" rows="2" placeholder="How can this be mitigated?"></textarea>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn-secondary" onclick="closeModal('riskModal')">Cancel</button>
+    <button class="btn-primary" id="saveRiskBtn">Save Risk</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

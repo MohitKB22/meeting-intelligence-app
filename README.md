@@ -5,7 +5,6 @@
 ![HTML](https://img.shields.io/badge/HTML5-Frontend-orange)
 ![CSS](https://img.shields.io/badge/CSS3-Styling-blue)
 ![JavaScript](https://img.shields.io/badge/JavaScript-Vanilla-yellow)
-![Claude AI](https://img.shields.io/badge/AI-Claude-purple)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ## ✨ Overview

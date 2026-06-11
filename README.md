@@ -70,12 +70,6 @@ Get insights on:
 
 ## 🚀 Quick Start
 
-```bash
-git clone https://github.com/yourusername/meeting-assistant-ai.git
-
-cd meeting-assistant-ai
-```
-
 Open:
 
 ```bash
